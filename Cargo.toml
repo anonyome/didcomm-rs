@@ -44,7 +44,8 @@ uniffi_build = "=0.14.0"
 
 # Include uniffi dependencies
 [lib]
-crate-type = ["cdylib", "rlib"]
+# iOS needs "staticlib"
+crate-type = ["cdylib", "rlib", "staticlib"]
 
 [dev-dependencies]
 sodiumoxide = "0.2.6"
