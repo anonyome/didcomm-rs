@@ -36,11 +36,11 @@ rand = "0.8"
 rand_chacha = "0.3.0"
 thiserror = "1.0"
 # Include uniffi dependencies
-uniffi = "0.14.0"
+uniffi = "=0.14.0"
 
 # Include uniffi dependencies
 [build-dependencies]
-uniffi_build = "0.14.0"
+uniffi_build = "=0.14.0"
 
 # Include uniffi dependencies
 [lib]
