@@ -233,7 +233,7 @@ impl Message {
                 if let Some(document) = resolve_any(from) {
                     match &CryptoAlgorithm::XC20P {
                         CryptoAlgorithm::XC20P => 
-                                my_jh.kid = document.find_public_key_id_for_curve("X25519"),
+                                my_jh.kid = document.find_public_key_id_for_curve("Ed25519"),
                         CryptoAlgorithm::A256GCM => todo!()
                     }
                 }
@@ -421,7 +421,7 @@ impl Message {
                         CryptoAlgorithm::XC20P => 
                                 // self.jwm_header.read().unwrap().kid = 
                                 self.jwm_header.write().unwrap().kid = 
-                                    document.find_public_key_id_for_curve("X25519"),
+                                    document.find_public_key_id_for_curve("Ed25519"),
                         CryptoAlgorithm::A256GCM => todo!()
                     }
                 }
@@ -643,7 +643,7 @@ impl Message {
         if jwe.header.skid.is_none() { return Err(Error::DidResolveFailed); }
         if let Some(document) = ddoresolver_rs::resolve_any(&jwe.header.skid.to_owned().unwrap()) {
             if let Some(alg) = &jwe.header.alg {
-                if let Some(k_arg) = document.find_public_key_for_curve("X25519") {
+                if let Some(k_arg) = document.find_public_key_for_curve("Ed25519") {
                     let shared = StaticSecret::from(array_ref!(sk, 0, 32).to_owned())
                         .diffie_hellman(&PublicKey::from(array_ref!(k_arg, 0, 32).to_owned()));
                     let a: CryptoAlgorithm = alg.try_into()?;
@@ -699,7 +699,7 @@ impl Message {
 
 fn gen_shared_for_recepient(sk: impl AsRef<[u8]>, did: &str) -> Result<impl AsRef<[u8]>, Error> {
     if let Some(document) = resolve_any(did) {
-        if let Some(agreement) = document.find_public_key_for_curve("X25519") {
+        if let Some(agreement) = document.find_public_key_for_curve("Ed25519") {
             let ss = StaticSecret::from(array_ref!(sk.as_ref(), 0, 32).to_owned())
                 .diffie_hellman(&PublicKey::from(array_ref!(agreement, 0, 32).to_owned()));
             Ok(*ss.as_bytes())
