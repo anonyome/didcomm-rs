@@ -2,7 +2,7 @@ use std::{convert::TryInto, time::SystemTime};
 use base64_url::{encode, decode};
 
 // --- Added for uniffi ---
-use rust_base58::{FromBase58};
+use rust_base58::{FromBase58, ToBase58};
 use std::sync::{Arc, RwLock};
 // --- End for uniffi ---
 
@@ -250,6 +250,11 @@ impl Message {
     pub fn unwrap_base58_key(&self, key: String) -> Vec<u8> {
 
         return key.as_str().from_base58().unwrap();
+    }
+
+    pub fn wrap_key_base58(&self, key: &[u8]) -> String {
+
+        return key.to_base58();
     }
 
     // Due to Rust's ownership rules, seal2() needed to receive a "&mut self" parameter 

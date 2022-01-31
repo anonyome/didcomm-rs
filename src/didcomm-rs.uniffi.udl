@@ -25,6 +25,8 @@ interface Message {
 
     sequence<u8> unwrap_base58_key(string key);
 
+    string wrap_key_base58([ByRef] sequence<u8> key);
+
     string seal2([ByRef] sequence<u8> sk);
 
     string set_routed_by([ByRef] sequence<u8> ekey, [ByRef] string mediator_did_string);
