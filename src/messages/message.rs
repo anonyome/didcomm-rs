@@ -2,7 +2,7 @@ use std::{convert::TryInto, time::SystemTime};
 use base64_url::{encode, decode};
 
 // --- Added for uniffi ---
-use rust_base58::{FromBase58};
+use rust_base58::{FromBase58, ToBase58};
 use std::sync::{Arc, RwLock};
 // --- End for uniffi ---
 
@@ -186,6 +186,15 @@ impl Message {
         return r_value
     }
 
+        /// Setter of the `body`
+    /// Helper method.
+    ///
+    // pub fn set_body(&self, body: &[u8]) -> Self {
+
+    //     self.body.write().unwrap().push_str(&encode(body));
+    //     (*self).clone()
+    // }
+
     // The capabilities provided by uniffi need getters and setters rather
     // than manipulating data directly.  This is a helper function. 
     // The existing Message::set_body() returns a Result, so this function 
@@ -196,6 +205,51 @@ impl Message {
         self.body.write().unwrap().clear();
         self.body.write().unwrap().push_str(&encode(body));
     }
+
+        /// Creates set of Jwm related headers for the JWS
+    /// Modifies JWM related header portion to match
+    ///     signature implementation and leaves Other
+    ///     parts unchanged.
+    ///
+    /// For `resolve` feature will set `kid` header automatically
+    ///     based on the did document resolved.
+    // ///
+    // pub fn as_jwe(self, alg: &CryptoAlgorithm) -> Self {
+    //     self.jwm_header.write().unwrap().as_encrypted(alg);
+    //     #[cfg(feature = "resolve")]
+    //     {
+    //         if let Some(from) = &self.didcomm_header.read().unwrap().from {
+    //             if let Some(document) = resolve_any(from) {
+    //                 match alg {
+    //                     CryptoAlgorithm::XC20P => 
+    //                             // self.jwm_header.read().unwrap().kid = 
+    //                             self.jwm_header.write().unwrap().kid = 
+    //                                 document.find_public_key_id_for_curve("X25519"),
+    //                     CryptoAlgorithm::A256GCM => todo!()
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     self
+    // }
+
+    pub fn as_xc20p_jwe(self: Arc<Self>) -> () {
+        self.jwm_header.write().unwrap().as_encrypted(&CryptoAlgorithm::XC20P);
+        #[cfg(feature = "resolve")]
+        {
+            if let Some(from) = &self.didcomm_header.read().unwrap().from {
+                if let Some(document) = resolve_any(from) {
+                    match alg {
+                        CryptoAlgorithm::XC20P => 
+                                self.jwm_header.write().unwrap().kid = 
+                                    document.find_public_key_id_for_curve("X25519"),
+                        CryptoAlgorithm::A256GCM => todo!()
+                    }
+                }
+            }
+        }
+    }
+
 
     // The capabilities provided by uniffi need getters and setters rather
     // than manipulating data directly.  This is a helper function.  
@@ -250,6 +304,11 @@ impl Message {
     pub fn unwrap_base58_key(&self, key: String) -> Vec<u8> {
 
         return key.as_str().from_base58().unwrap();
+    }
+
+    pub fn wrap_key_base58(&self, key: &[u8]) -> String {
+
+        return key.to_base58();
     }
 
     // Due to Rust's ownership rules, seal2() needed to receive a "&mut self" parameter 

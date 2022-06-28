@@ -14,6 +14,9 @@ interface Message {
     [Self=ByArc]
     void set_from(string from);
 
+    [Self=ByArc]
+    void as_xc20p_jwe()
+
     sequence<u8> get_body2();
     [Self=ByArc]
     void set_body2([ByRef] sequence<u8> body);
@@ -24,6 +27,8 @@ interface Message {
     void set_crypto_algorithm_xc20_p();
 
     sequence<u8> unwrap_base58_key(string key);
+
+    string wrap_key_base58([ByRef] sequence<u8> key);
 
     string seal2([ByRef] sequence<u8> sk);
 

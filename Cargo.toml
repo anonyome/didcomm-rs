@@ -11,6 +11,8 @@ license = "Apache-2.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Temp fix for breaking dependency update: https://github.com/mozilla/uniffi-rs/issues/1109
+anyhow = "=1.0.45"
 # Serialization
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -34,15 +36,16 @@ rand = "0.8"
 rand_chacha = "0.3.0"
 thiserror = "1.0"
 # Include uniffi dependencies
-uniffi = "0.14.0"
+uniffi = "=0.14.0"
 
 # Include uniffi dependencies
 [build-dependencies]
-uniffi_build = "0.14.0"
+uniffi_build = "=0.14.0"
 
 # Include uniffi dependencies
 [lib]
-crate-type = ["cdylib", "rlib"]
+# iOS needs "staticlib"
+crate-type = ["cdylib", "rlib", "staticlib"]
 
 [dev-dependencies]
 sodiumoxide = "0.2.6"
